@@ -1,7 +1,7 @@
 ﻿using AssetsTools.NET;
 using System.Diagnostics.CodeAnalysis;
 
-namespace TypeTreeConversionDemo;
+namespace TypeTreeConversion;
 
 public static class AssetTypeValueFieldExtensions
 {

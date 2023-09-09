@@ -2,7 +2,7 @@
 using AssetsTools.NET.Extra;
 using System.Diagnostics;
 
-namespace TypeTreeConversionDemo;
+namespace TypeTreeConversion;
 
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public readonly struct UnityAsset

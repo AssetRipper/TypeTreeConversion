@@ -1,6 +1,6 @@
 ﻿using AssetsTools.NET;
 
-namespace TypeTreeConversionDemo;
+namespace TypeTreeConversion;
 
 public abstract class TypeTreeReplacer
 {

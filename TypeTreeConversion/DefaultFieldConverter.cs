@@ -1,7 +1,7 @@
 ﻿using AssetsTools.NET;
 using AssetsTools.NET.Extra;
 
-namespace TypeTreeConversionDemo;
+namespace TypeTreeConversion;
 
 public class DefaultFieldConverter : FieldConverter
 {

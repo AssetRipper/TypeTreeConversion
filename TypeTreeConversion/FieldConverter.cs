@@ -2,7 +2,7 @@
 using AssetsTools.NET.Extra;
 using System.Diagnostics;
 
-namespace TypeTreeConversionDemo;
+namespace TypeTreeConversion;
 
 public abstract class FieldConverter
 {

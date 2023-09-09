@@ -3,7 +3,7 @@ using AssetRipper.Tpk.TypeTrees;
 using AssetRipper.Tpk.TypeTrees.Json;
 using UnityVersion = AssetRipper.Primitives.UnityVersion;
 
-namespace TypeTreeConversionDemo;
+namespace TypeTreeConversion;
 
 public static class TpkCreator
 {
