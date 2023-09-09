@@ -1,12 +1,13 @@
 ﻿using AssetsTools.NET;
 using AssetsTools.NET.Extra;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 
 namespace TypeTreeConversionDemo;
 
-internal static class Program
+public static class Program
 {
+	public static event Action<FieldConverterRegistry>? RegisterFieldConverters;
+	public static event Action<TypeTreeReplacerRegistry>? RegisterTypeTreeReplacers;
+
 	//Arg 0: Path to assets file
 	//Arg 1: Path to save converted assets file
 	//Arg 2: Path to json type tree
@@ -23,97 +24,34 @@ internal static class Program
 		tpk.Read(args[3]);
 		ClassDatabaseFile unityClassDatabase = tpk.GetClassDatabase(file.file.Metadata.UnityVersion);
 
+		FieldConverterRegistry registry = new(unityClassDatabase);
+		RegisterFieldConverters?.Invoke(registry);
+
 		foreach (UnityAsset asset in serializeFile.Assets)
 		{
-			AssetTypeValueField baseField;
-			{
-				AssetTypeTemplateField templateField = new();
-				templateField.FromClassDatabase(unityClassDatabase, unityClassDatabase.FindAssetClassByID(asset.TypeID));
-				baseField = ValueBuilder.DefaultValueFieldFromTemplate(templateField);
-			}
-
-			CopyFields(asset.BaseField, baseField);
-			
-			asset.BaseField = baseField;
+			FieldConverter converter = registry.GetConverter(asset.TypeID);
+			converter.Convert(asset);
 		}
+
+		TypeTreeReplacerRegistry replacerRegistry = new(unityClassDatabase);
+		RegisterTypeTreeReplacers?.Invoke(replacerRegistry);
 
 		for (int i = 0; i < file.file.Metadata.TypeTreeTypes.Count; i++)
 		{
 			TypeTreeType original = file.file.Metadata.TypeTreeTypes[i];
-			if (original.TypeId is not 114)
-			{
-				TypeTreeType replacement = ClassDatabaseToTypeTree.Convert(unityClassDatabase, original.TypeId);
-				file.file.Metadata.TypeTreeTypes[i] = replacement;
-			}
+			TypeTreeReplacer replacer = replacerRegistry.GetReplacer(original.TypeId);
+			file.file.Metadata.TypeTreeTypes[i] = replacer.Replace(original);
 		}
 
-		using (FileStream stream = File.Create(args[1]))
-		{
-			AssetsFileWriter writer = new(stream);
-			file.file.Write(writer);
-		}
+		file.Write(args[1]);
 
 		Console.WriteLine("Done!");
 	}
 
-	private static void CopyFields(AssetTypeValueField source, AssetTypeValueField destination)
+	private static void Write(this AssetsFileInstance file, string path)
 	{
-		foreach (AssetTypeValueField destinationChild in destination.Children)
-		{
-			if (!source.TryGetChild(destinationChild.FieldName, out AssetTypeValueField? sourceChild))
-			{
-				continue;
-			}
-
-			AssetValueType destinationType = destinationChild.GetValueType();
-			AssetValueType sourceType = sourceChild.GetValueType();
-			if (destinationType != sourceType)
-			{
-				continue;
-			}
-			if (destinationType == AssetValueType.None)
-			{
-				CopyFields(sourceChild, destinationChild);
-			}
-			else
-			{
-				destinationChild.Value = new AssetTypeValue(sourceChild.Value.ValueType, sourceChild.Value.AsObject);
-				if (!sourceChild.HasNoChildren())
-				{
-					Debug.Assert(destinationChild.HasNoChildren());
-					destinationChild.Children ??= new();
-					foreach (AssetTypeValueField sourceGrandchild in sourceChild.Children)
-					{
-						AssetTypeValueField destinationGrandchild = ValueBuilder.DefaultValueFieldFromArrayTemplate(destinationChild.TemplateField);
-						destinationChild.Children.Add(destinationGrandchild);
-						CopyFields(sourceGrandchild, destinationGrandchild);
-					}
-				}
-			}
-		}
-	}
-
-	private static AssetValueType GetValueType(this AssetTypeValueField field)
-	{
-		return field.Value is null ? AssetValueType.None : field.Value.ValueType;
-	}
-
-	private static bool HasNoChildren(this AssetTypeValueField field)
-	{
-		return field.Children is null or { Count: 0 };
-	}
-
-	private static bool TryGetChild(this AssetTypeValueField parent, string childName, [NotNullWhen(true)] out AssetTypeValueField? child)
-	{
-		foreach (AssetTypeValueField field in parent.Children)
-		{
-			if (field.FieldName == childName)
-			{
-				child = field;
-				return true;
-			}
-		}
-		child = null;
-		return false;
+		using FileStream stream = File.Create(path);
+		AssetsFileWriter writer = new(stream);
+		file.file.Write(writer);
 	}
 }

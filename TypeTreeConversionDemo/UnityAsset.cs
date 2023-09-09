@@ -7,24 +7,24 @@ namespace TypeTreeConversionDemo;
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public readonly struct UnityAsset
 {
-	private readonly AssetsManager manager;
-	private readonly AssetsFileInstance file;
-	private readonly AssetFileInfo info;
+	public AssetsManager Manager { get; }
+	public AssetsFileInstance File { get; }
+	public AssetFileInfo Info { get; }
 
 	public UnityAsset(AssetsManager manager, AssetsFileInstance file, AssetFileInfo info)
 	{
-		this.manager = manager;
-		this.file = file;
-		this.info = info;
+		this.Manager = manager;
+		this.File = file;
+		this.Info = info;
 	}
 
 	public int TypeID
 	{
-		get => info.TypeId;
-		set => info.TypeId = value;
+		get => Info.TypeId;
+		set => Info.TypeId = value;
 	}
 
-	public long PathID => info.PathId;
+	public long PathID => Info.PathId;
 
 	public string Name
 	{
@@ -45,11 +45,11 @@ public readonly struct UnityAsset
 	{
 		get
 		{
-			return manager.GetBaseField(file, info);
+			return Manager.GetBaseField(File, Info);
 		}
 		set
 		{
-			info.SetNewData(value);
+			Info.SetNewData(value);
 		}
 	}
 
