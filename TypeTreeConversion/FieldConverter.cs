@@ -17,14 +17,14 @@ public abstract class FieldConverter
 
 		AssetTypeValueField baseField = CreateNewBaseField(asset.TypeID);
 
-		CopyFields(asset.BaseField, baseField);
+		CopyFields(asset, asset.BaseField, baseField);
 
 		asset.BaseField = baseField;
 	}
 
 	protected abstract AssetTypeValueField CreateNewBaseField(int originalTypeID);
 
-	protected virtual void CopyFields(AssetTypeValueField source, AssetTypeValueField destination)
+	protected virtual void CopyFields(UnityAsset asset, AssetTypeValueField source, AssetTypeValueField destination)
 	{
 		CopyFieldsExactly(source, destination);
 	}

@@ -4,6 +4,7 @@ using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace TypeTreeConversion;
@@ -17,39 +18,57 @@ public static class Program
 	{
 		RootCommand rootCommand = new() { Description = "TypeTree Conversion" };
 
-		Option<FileInfo?> inputOption = new Option<FileInfo?>(
+		Option<FileInfo?> inputOption = new(
 						aliases: new[] { "-i", "--input" },
 						description: "",
 						getDefaultValue: () => null);
 		rootCommand.AddOption(inputOption);
 
-		Option<FileInfo?> outputOption = new Option<FileInfo?>(
+		Option<FileInfo?> outputOption = new(
 						aliases: new[] { "-o", "--output" },
 						description: "",
 						getDefaultValue: () => null);
 		rootCommand.AddOption(outputOption);
 
-		Option<FileInfo?> typeTreeOption = new Option<FileInfo?>(
+		Option<FileInfo?> typeTreeOption = new(
 						name: "--type-tree",
 						description: "The type tree json for the input file.",
 						getDefaultValue: () => null);
 		rootCommand.AddOption(typeTreeOption);
 
-		Option<FileInfo?> tpkOption = new Option<FileInfo?>(
+		Option<FileInfo?> tpkOption = new(
 						name: "--tpk",
 						description: "The tpk file, available at https://github.com/AssetRipper/Tpk",
 						getDefaultValue: () => null);
 		rootCommand.AddOption(tpkOption);
 
-		rootCommand.SetHandler((FileInfo? input, FileInfo? output, FileInfo? typeTree, FileInfo? tpk) =>
+		Option<List<FileInfo?>?> pluginOption = new(
+						name: "--plugin",
+						description: "A plugin to be loaded.",
+						getDefaultValue: () => null);
+		rootCommand.AddOption(pluginOption);
+
+		rootCommand.SetHandler((FileInfo? input, FileInfo? output, FileInfo? typeTree, FileInfo? tpk, List<FileInfo?>? pluginList) =>
 		{
-			ValidateArguments(input, output, typeTree, tpk);
+			ValidateArguments(input, output, typeTree, tpk, pluginList);
+			LoadPlugins(pluginList);
 			Run(input.FullName, output.FullName, typeTree.FullName, tpk.FullName);
 		},
-		inputOption, outputOption, typeTreeOption, tpkOption);
+		inputOption, outputOption, typeTreeOption, tpkOption, pluginOption);
 
 		new CommandLineBuilder(rootCommand)
-			.UseDefaults()
+			.UseVersionOption()
+			.UseHelp()
+			.UseEnvironmentVariableDirective()
+			.UseParseDirective()
+			.UseSuggestDirective()
+			.RegisterWithDotnetSuggest()
+			.UseTypoCorrections()
+			.UseParseErrorReporting()
+#if !DEBUG
+			.UseExceptionHandler()
+#endif
+			.CancelOnProcessTermination()
 			.Build()
 			.Invoke(args);
 	}
@@ -90,7 +109,22 @@ public static class Program
 		Console.WriteLine("Done!");
 	}
 
-	private static void ValidateArguments([NotNull] FileInfo? input, [NotNull] FileInfo? output, [NotNull] FileInfo? typeTree, [NotNull] FileInfo? tpk)
+	private static void LoadPlugins(List<FileInfo?>? pluginList)
+	{
+		if (pluginList is not null)
+		{
+			foreach (FileInfo? plugin in pluginList)
+			{
+				Assembly assembly = Assembly.LoadFrom(plugin!.FullName);
+				foreach (RegisterPluginAttribute attribute in assembly.GetCustomAttributes<RegisterPluginAttribute>())
+				{
+					attribute.CreateInstance();
+				}
+			}
+		}
+	}
+
+	private static void ValidateArguments([NotNull] FileInfo? input, [NotNull] FileInfo? output, [NotNull] FileInfo? typeTree, [NotNull] FileInfo? tpk, List<FileInfo?>? pluginList)
 	{
 		ArgumentNullException.ThrowIfNull(input);
 		ArgumentNullException.ThrowIfNull(output);
@@ -99,6 +133,14 @@ public static class Program
 		ThrowIfNotExists(input);
 		ThrowIfNotExists(typeTree);
 		ThrowIfNotExists(tpk);
+		if (pluginList is not null)
+		{
+			foreach (FileInfo? plugin in pluginList)
+			{
+				ArgumentNullException.ThrowIfNull(plugin);
+				ThrowIfNotExists(plugin);
+			}
+		}
 	}
 
 	private static void ThrowIfNotExists(FileInfo file, [CallerArgumentExpression(nameof(file))] string? paramName = null)

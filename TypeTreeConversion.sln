@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tpk.TypeTrees.Json", "..\Tp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeTreeConversion", "TypeTreeConversion\TypeTreeConversion.csproj", "{57D347F0-7160-40B4-B05E-29830EF0E6D4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeTreeConversion.TextAssetExample", "TypeTreeConversion.TextAssetExample\TypeTreeConversion.TextAssetExample.csproj", "{7D193F1C-1838-4CA0-8018-D237A19CB4B3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{57D347F0-7160-40B4-B05E-29830EF0E6D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57D347F0-7160-40B4-B05E-29830EF0E6D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57D347F0-7160-40B4-B05E-29830EF0E6D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D193F1C-1838-4CA0-8018-D237A19CB4B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D193F1C-1838-4CA0-8018-D237A19CB4B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D193F1C-1838-4CA0-8018-D237A19CB4B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D193F1C-1838-4CA0-8018-D237A19CB4B3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
