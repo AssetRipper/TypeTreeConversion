@@ -5,26 +5,28 @@ using System.Diagnostics;
 namespace TypeTreeConversion;
 
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
-public readonly struct UnityAsset
+public readonly record struct UnityAsset
 {
 	public AssetsManager Manager { get; }
-	public AssetsFileInstance File { get; }
-	public AssetFileInfo Info { get; }
+	public AssetsFileInstance FileInstance { get; }
+	public AssetFileInfo FileInfo { get; }
 
 	public UnityAsset(AssetsManager manager, AssetsFileInstance file, AssetFileInfo info)
 	{
-		this.Manager = manager;
-		this.File = file;
-		this.Info = info;
+		Manager = manager;
+		FileInstance = file;
+		FileInfo = info;
 	}
+
+	public SerializeFile File => new SerializeFile(FileInstance, Manager);
 
 	public int TypeID
 	{
-		get => Info.TypeId;
-		set => Info.TypeId = value;
+		get => FileInfo.TypeId;
+		set => FileInfo.TypeId = value;
 	}
 
-	public long PathID => Info.PathId;
+	public long PathID => FileInfo.PathId;
 
 	public string Name
 	{
@@ -45,11 +47,11 @@ public readonly struct UnityAsset
 	{
 		get
 		{
-			return Manager.GetBaseField(File, Info);
+			return Manager.GetBaseField(FileInstance, FileInfo);
 		}
 		set
 		{
-			Info.SetNewData(value);
+			FileInfo.SetNewData(value);
 		}
 	}
 
@@ -60,7 +62,7 @@ public readonly struct UnityAsset
 
 	public UnityAsset? ResolveAsset(AssetTypeValueField pptrField)
 	{
-		AssetExternal assetExternal = Manager.GetExtAsset(File, pptrField);
+		AssetExternal assetExternal = Manager.GetExtAsset(FileInstance, pptrField);
 		return assetExternal.file is null || assetExternal.info is null
 			? null
 			: new UnityAsset(Manager, assetExternal.file, assetExternal.info);
