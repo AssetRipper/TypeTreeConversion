@@ -57,4 +57,12 @@ public readonly struct UnityAsset
 	{
 		return $"{TypeID} : {Name}";
 	}
+
+	public UnityAsset? ResolveAsset(AssetTypeValueField pptrField)
+	{
+		AssetExternal assetExternal = Manager.GetExtAsset(File, pptrField);
+		return assetExternal.file is null || assetExternal.info is null
+			? null
+			: new UnityAsset(Manager, assetExternal.file, assetExternal.info);
+	}
 }
