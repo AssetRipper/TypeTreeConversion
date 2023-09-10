@@ -11,10 +11,10 @@ public abstract class TypeTreeReplacer
 			return original;
 		}
 
-		return CreateReplacement(original.TypeId);
+		return CreateReplacement(original.TypeId) ?? original;
 	}
 
 	protected virtual bool ShouldReplace(TypeTreeType original) => true;
 
-	protected abstract TypeTreeType CreateReplacement(int originalTypeID);
+	protected abstract TypeTreeType? CreateReplacement(int originalTypeID);
 }

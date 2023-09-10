@@ -12,7 +12,7 @@ public class DefaultTypeTreeReplacer : TypeTreeReplacer
 		this.classDatabase = classDatabase;
 	}
 
-	protected override TypeTreeType CreateReplacement(int originalTypeID)
+	protected override TypeTreeType? CreateReplacement(int originalTypeID)
 	{
 		return ClassDatabaseToTypeTree.Convert(classDatabase, originalTypeID);
 	}

@@ -8,7 +8,7 @@ public class TextAssetFieldConverter : DefaultFieldConverter
 	{
 	}
 
-	protected override AssetTypeValueField CreateNewBaseField(int originalTypeID)
+	protected override AssetTypeValueField? CreateNewBaseField(int originalTypeID)
 	{
 		return base.CreateNewBaseField(49);
 	}

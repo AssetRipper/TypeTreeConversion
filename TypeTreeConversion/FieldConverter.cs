@@ -15,14 +15,19 @@ public abstract class FieldConverter
 			return;
 		}
 
-		AssetTypeValueField baseField = CreateNewBaseField(asset.TypeID);
+		AssetTypeValueField? baseField = CreateNewBaseField(asset.TypeID);
+
+		if (baseField is null)
+		{
+			return;
+		}
 
 		CopyFields(asset, asset.BaseField, baseField);
 
 		asset.BaseField = baseField;
 	}
 
-	protected abstract AssetTypeValueField CreateNewBaseField(int originalTypeID);
+	protected abstract AssetTypeValueField? CreateNewBaseField(int originalTypeID);
 
 	protected virtual void CopyFields(UnityAsset asset, AssetTypeValueField source, AssetTypeValueField destination)
 	{

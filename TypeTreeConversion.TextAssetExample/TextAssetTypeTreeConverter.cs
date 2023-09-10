@@ -8,7 +8,7 @@ public class TextAssetTypeTreeConverter : DefaultTypeTreeReplacer
 	{
 	}
 
-	protected override TypeTreeType CreateReplacement(int originalTypeID)
+	protected override TypeTreeType? CreateReplacement(int originalTypeID)
 	{
 		return base.CreateReplacement(49);
 	}

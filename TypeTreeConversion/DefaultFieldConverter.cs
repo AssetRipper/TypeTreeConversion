@@ -12,10 +12,15 @@ public class DefaultFieldConverter : FieldConverter
 		this.classDatabase = classDatabase;
 	}
 
-	protected override AssetTypeValueField CreateNewBaseField(int originalTypeID)
+	protected override AssetTypeValueField? CreateNewBaseField(int originalTypeID)
 	{
 		AssetTypeTemplateField templateField = new();
-		templateField.FromClassDatabase(classDatabase, classDatabase.FindAssetClassByID(originalTypeID));
+		ClassDatabaseType? cldbType = classDatabase.FindAssetClassByID(originalTypeID);
+		if (cldbType is null)
+		{
+			return null;
+		}
+		templateField.FromClassDatabase(classDatabase, cldbType);
 		return ValueBuilder.DefaultValueFieldFromTemplate(templateField);
 	}
 }
