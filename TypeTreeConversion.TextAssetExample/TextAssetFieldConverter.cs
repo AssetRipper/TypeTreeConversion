@@ -7,7 +7,7 @@ namespace TypeTreeConversion.TextAssetExample;
 /// </summary>
 public class TextAssetFieldConverter : DefaultFieldConverter
 {
-	public TextAssetFieldConverter(ClassDatabaseFile classDatabase) : base(classDatabase)
+	public TextAssetFieldConverter(FieldConverterRegistry registry) : base(registry)
 	{
 	}
 

@@ -1,10 +1,12 @@
-﻿using AssetsTools.NET;
+﻿namespace TypeTreeConversion;
 
-namespace TypeTreeConversion;
-
+/// <summary>
+/// This replacer ensures that MonoBehaviours are correctly converted.
+/// Currently, this is done by doing nothing.
+/// </summary>
 public class MonoBehaviourFieldConverter : DefaultFieldConverter
 {
-	public MonoBehaviourFieldConverter(ClassDatabaseFile classDatabase) : base(classDatabase)
+	public MonoBehaviourFieldConverter(FieldConverterRegistry registry) : base(registry)
 	{
 	}
 

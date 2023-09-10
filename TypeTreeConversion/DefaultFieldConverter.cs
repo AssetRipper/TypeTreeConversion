@@ -7,9 +7,9 @@ public class DefaultFieldConverter : FieldConverter
 {
 	private readonly ClassDatabaseFile classDatabase;
 
-	public DefaultFieldConverter(ClassDatabaseFile classDatabase)
+	public DefaultFieldConverter(FieldConverterRegistry registry)
 	{
-		this.classDatabase = classDatabase;
+		classDatabase = registry.DestinationClassDatabase;
 	}
 
 	protected override AssetTypeValueField? CreateNewBaseField(int originalTypeID)

@@ -7,9 +7,9 @@ public class DefaultTypeTreeReplacer : TypeTreeReplacer
 {
 	private readonly ClassDatabaseFile classDatabase;
 
-	public DefaultTypeTreeReplacer(ClassDatabaseFile classDatabase)
+	public DefaultTypeTreeReplacer(TypeTreeReplacerRegistry registry)
 	{
-		this.classDatabase = classDatabase;
+		classDatabase = registry.DestinationClassDatabase;
 	}
 
 	protected override TypeTreeType? CreateReplacement(int originalTypeID)

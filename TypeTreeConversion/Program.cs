@@ -78,14 +78,14 @@ public static class Program
 		AssetsManager manager = new();
 		manager.LoadClassPackage(new MemoryStream(TpkCreator.ConvertJsonToTpk(typeTreePath)));
 		AssetsFileInstance file = manager.LoadAssetsFile(inputPath, false);
-		manager.LoadClassDatabaseFromPackage(file.file.Metadata.UnityVersion);
+		ClassDatabaseFile sourceClassDatabase = manager.LoadClassDatabaseFromPackage(file.file.Metadata.UnityVersion);
 		SerializeFile serializeFile = new(file, manager);
 
 		ClassPackageFile tpk = new();
 		tpk.Read(tpkPath);
-		ClassDatabaseFile unityClassDatabase = tpk.GetClassDatabase(file.file.Metadata.UnityVersion);
+		ClassDatabaseFile destinationClassDatabase = tpk.GetClassDatabase(file.file.Metadata.UnityVersion);
 
-		FieldConverterRegistry registry = new(unityClassDatabase);
+		FieldConverterRegistry registry = new(sourceClassDatabase, destinationClassDatabase);
 		RegisterFieldConverters?.Invoke(registry);
 
 		foreach (UnityAsset asset in serializeFile.Assets)
@@ -94,7 +94,7 @@ public static class Program
 			converter.Convert(asset);
 		}
 
-		TypeTreeReplacerRegistry replacerRegistry = new(unityClassDatabase);
+		TypeTreeReplacerRegistry replacerRegistry = new(sourceClassDatabase, destinationClassDatabase);
 		RegisterTypeTreeReplacers?.Invoke(replacerRegistry);
 
 		for (int i = 0; i < file.file.Metadata.TypeTreeTypes.Count; i++)

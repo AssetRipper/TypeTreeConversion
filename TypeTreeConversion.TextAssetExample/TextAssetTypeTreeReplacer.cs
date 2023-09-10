@@ -7,7 +7,7 @@ namespace TypeTreeConversion.TextAssetExample;
 /// </summary>
 public class TextAssetTypeTreeReplacer : DefaultTypeTreeReplacer
 {
-	public TextAssetTypeTreeReplacer(ClassDatabaseFile classDatabase) : base(classDatabase)
+	public TextAssetTypeTreeReplacer(TypeTreeReplacerRegistry registry) : base(registry)
 	{
 	}
 
