@@ -1,5 +1,8 @@
 ﻿namespace TypeTreeConversion.TextAssetExample;
 
+/// <summary>
+/// This example plugin replaces all assets with TextAssets.
+/// </summary>
 public class TextAssetPlugin : ConversionPlugin
 {
 	public TextAssetPlugin()
@@ -17,8 +20,8 @@ public class TextAssetPlugin : ConversionPlugin
 
 	private static void RegisterTypeTreeReplacers(TypeTreeReplacerRegistry registry)
 	{
-		TextAssetTypeTreeConverter converter = new(registry.ClassDatabase);
+		TextAssetTypeTreeReplacer replacer = new(registry.ClassDatabase);
 		registry.Replacers.Clear();
-		registry.DefaultReplacer = converter;
+		registry.DefaultReplacer = replacer;
 	}
 }
