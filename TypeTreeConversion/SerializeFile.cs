@@ -49,6 +49,7 @@ public readonly record struct SerializeFile
 
 		public void Add(UnityAsset item)
 		{
+			ThrowIfFromDifferentFile(item);
 			InternalList.Add(item.FileInfo);
 		}
 
